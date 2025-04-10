@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antonio's Overleaf Clone</title>
+    
+    <!-- External dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/nord.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --primary-light: #3182ce;
+            --primary-dark: #2c5282;
+            --secondary-color: #38b2ac;
+            --secondary-light: #4fd1c5;
+            --secondary-dark: #319795;
+            --success-color: #38a169;
+            --success-light: #48bb78;
+            --error-color: #e53e3e;
+            --error-light: #f56565;
+            --warning-color: #d69e2e;
+            --warning-light: #ecc94b;
+            --dark-color: #1a202c;
+            --dark-light: #2d3748;
+            --light-color: #f7fafc;
+            --gray-color: #a0aec0;
+            --gray-light: #e2e8f0;
+            --gray-dark: #4a5568;
+            --font-primary: 'Poppins', sans-serif;
+            --font-code: 'Source Code Pro', monospace;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.125rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --radius-xl: 1rem;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .navbar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            z-index: 10;
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .navbar-brand img {
+            height: 2.25rem;
+            width: auto;
+        }
+        
+        .navbar-brand h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+            background: linear-gradient(90deg, #ffffff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .navbar-brand span {
+            font-weight: 300;
+        }
+        
+        .navbar .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .project-info {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .project-info:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: var(--success-light);
+        }
+        
+        .btn-error {
+            background-color: var(--error-color);
+        }
+        
+        .btn-error:hover {
+            background-color: var(--error-light);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .btn-warning:hover {
+            background-color: var(--warning-light);
+        }
+        
+        .btn i {
+            font-size: 1rem;
+        }
+        
+        .btn-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border-radius: 50%;
+        }
+        
+        .users-panel {
+            background-color: var(--gray-light);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--gray-color);
+        }
+        
+        .users-container {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+        }
+        
+        .users-container::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .users-container::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+        
+        .users-container::-webkit-scrollbar-thumb {
+            background: var(--gray-color);
+            border-radius: var(--radius-lg);
+        }
+        
+        .user-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-xl);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: var(--shadow-sm);
+            white-space: nowrap;
+        }
+        
+        .user-badge .status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success-light);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+        }
+        
+        .document-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--light-color);
+            border-right: 1px solid var(--gray-light);
+            position: relative;
+        }
+        
+        .editor-header {
+            background-color: var(--gray-light);
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--gray-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .editor-header h2 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .editor-body {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .CodeMirror {
+            height: 100% !important;
+            font-family: var(--font-code) !important;
+            font-size: 1rem !important;
+        }
+        
+        .preview-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--light-color);
+        }
+        
+        .preview-header {
+            background-color: var(--gray-light);
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--gray-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preview-header h2 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .preview-body {
+            flex: 1;
+            overflow: auto;
+            background-color: #f3f4f6;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .pdf-container {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: white;
+        }
+        
+        .pdf-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .pdf-loading i {
+            font-size: 3rem;
+            color: var(--gray-dark);
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .pdf-loading p {
+            margin-top: 1rem;
+            color: var(--gray-dark);
+            font-weight: 500;
+        }
+        
+        .compilation-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .status-success {
+            background-color: rgba(56, 161, 105, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-error {
+            background-color: rgba(229, 62, 62, 0.1);
+            color: var(--error-color);
+        }
+        
+        .status-compiling {
+            background-color: rgba(214, 158, 46, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background-color: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow: auto;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--gray-dark);
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background-color: var(--gray-light);
+            color: var(--dark-color);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-color);
+            border-radius: var(--radius-md);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+        }
+        
+        .form-text {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-dark);
+        }
+        
+        .form-choices {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+        
+        .choice-card {
+            flex: 1;
+            border: 2px solid var(--gray-light);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .choice-card:hover {
+            border-color: var(--primary-light);
+            background-color: var(--gray-light);
+        }
+        
+        .choice-card.active {
+            border-color: var(--primary-color);
+            background-color: rgba(49, 130, 206, 0.05);
+        }
+        
+        .choice-card i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+        }
+        
+        .choice-card h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .choice-card p {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-dark);
+        }
+        
+        .error-container {
+            padding: 1.25rem;
+            background-color: var(--light-color);
+            border: 1px solid var(--error-light);
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+        }
+        
+        .error-container h3 {
+            margin: 0 0 0.75rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--error-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .error-content {
+            font-family: var(--font-code);
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow: auto;
+            padding: 1rem;
+            background-color: white;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--radius-md);
+            color: var(--dark-color);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background-color: white;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateX(120%);
+            transition: transform 0.3s;
+            z-index: 1001;
+            max-width: 350px;
+        }
+        
+        .toast.active {
+            transform: translateX(0);
+        }
+        
+        .toast-icon {
+            width: 2rem;
+            height: 2rem;
+            min-width: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .toast-icon.success {
+            background-color: var(--success-color);
+        }
+        
+        .toast-icon.error {
+            background-color: var(--error-color);
+        }
+        
+        .toast-icon.info {
+            background-color: var(--primary-color);
+        }
+        
+        .toast-content {
+            flex: 1;
+        }
+        
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--dark-color);
+        }
+        
+        .toast-message {
+            font-size: 0.875rem;
+            color: var(--gray-dark);
+        }
+        
+        .toast-close {
+            background: transparent;
+            border: none;
+            color: var(--gray-dark);
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        
+        .toast-close:hover {
+            background-color: var(--gray-light);
+            color: var(--dark-color);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Resizable panels */
+        .resizer {
+            width: 6px;
+            background-color: var(--gray-light);
+            cursor: col-resize;
+            transition: background-color 0.2s;
+        }
+        
+        .resizer:hover, .resizer.active {
+            background-color: var(--primary-light);
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .workspace {
+                flex-direction: column;
+            }
+            
+            .editor-container, .preview-container {
+                flex: none;
+                height: 50%;
+            }
+            
+            .editor-container {
+                border-right: none;
+                border-bottom: 1px solid var(--gray-light);
+            }
+            
+            .resizer {
+                width: 100%;
+                height: 6px;
+                cursor: row-resize;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="modal-overlay active">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Welcome to Antonio's Overleaf Clone</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="usernameInput">Your Name</label>
+                    <input type="text" id="usernameInput" class="form-control" placeholder="Enter your name">
+                    <div class="form-text">This will be displayed to other collaborators.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>What would you like to do?</label>
+                    <div class="form-choices">
+                        <div id="newProjectChoice" class="choice-card active">
+                            <i class="fas fa-file-alt"></i>
+                            <h3>New Project</h3>
+                            <p>Start with a fresh LaTeX document</p>
+                        </div>
+                        <div id="joinProjectChoice" class="choice-card">
+                            <i class="fas fa-users"></i>
+                            <h3>Join Project</h3>
+                            <p>Collaborate on an existing document</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="joinProjectForm" class="form-group hidden">
+                    <label for="projectIdInput">Project ID</label>
+                    <input type="text" id="projectIdInput" class="form-control" placeholder="Enter the project ID shared with you">
+                    <div class="form-text">Ask your collaborator for the project ID.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="startEditingBtn" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    <span>Start Editing</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>LaTeX Compilation Error</h2>
+                <button class="modal-close" id="closeErrorBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="error-container">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Compilation Failed</h3>
+                    <div id="errorContent" class="error-content"></div>
+                </div>
+                <p>Tip: LaTeX error messages can be cryptic. Look for line numbers and missing symbols like braces or backslashes.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="dismissErrorBtn">Dismiss</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Layout -->
+    <div class="navbar">
+        <div class="navbar-brand">
+            <h1>Antonio's <span>Overleaf Clone</span></h1>
+        </div>
+        <div class="controls">
+            <div class="project-info" id="projectIdDisplay">
+                <i class="fas fa-folder"></i>
+                <span>Creating new project...</span>
+            </div>
+            <button id="compileBtn" class="btn btn-success">
+                <i class="fas fa-play"></i>
+                <span>Compile</span>
+            </button>
+            <button id="downloadPdfBtn" class="btn">
+                <i class="fas fa-download"></i>
+                <span>Download PDF</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="users-panel">
+        <div class="users-container" id="usersPanel">
+            <!-- User badges will be added here -->
+        </div>
+        <div class="document-actions">
+            <button id="shareBtn" class="btn">
+                <i class="fas fa-share-alt"></i>
+                <span>Share</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="workspace">
+        <div class="editor-container">
+            <div class="editor-header">
+                <h2><i class="fas fa-code"></i> LaTeX Editor</h2>
+                <div class="editor-actions">
+                    <button id="formatBtn" class="btn btn-icon" title="Format Code">
+                        <i class="fas fa-indent"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="editor-body">
+                <textarea id="editor"></textarea>
+            </div>
+        </div>
+        
+        <div class="resizer" id="resizer"></div>
+        
+        <div class="preview-container">
+            <div class="preview-header">
+                <h2><i class="fas fa-file-pdf"></i> PDF Preview</h2>
+                <div id="compilationStatus" class="compilation-status status-compiling">
+                    <i class="fas fa-sync-alt fa-spin"></i>
+                    <span>Waiting for compilation...</span>
+                </div>
+            </div>
+            <div class="preview-body">
+                <iframe id="pdfPreview" class="pdf-container"></iframe>
+                <div class="pdf-loading" id="pdfLoading">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <p>Loading preview...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon info" id="toastIcon">
+            <i class="fas fa-info"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Notification</div>
+            <div class="toast-message" id="toastMessage">This is a toast message.</div>
+        </div>
+        <button class="toast-close" id="toastClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <!-- External Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/stex/stex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+    
+    <script>
+        // State variables
+        let editor;
+        let socket;
+        let projectId = null;
+        let username = null;
+        let lastSentContent = '';
+        let isCompiling = false;
+        let sendChangeTimeout = null;
+        let editorWidth = 50; // Percentage
+        
+        // DOM Elements
+        const welcomeModal = document.getElementById('welcomeModal');
+        const usernameInput = document.getElementById('usernameInput');
+        const newProjectChoice = document.getElementById('newProjectChoice');
+        const joinProjectChoice = document.getElementById('joinProjectChoice');
+        const joinProjectForm = document.getElementById('joinProjectForm');
+        const projectIdInput = document.getElementById('projectIdInput');
+        const startEditingBtn = document.getElementById('startEditingBtn');
+        
+        const projectIdDisplay = document.getElementById('projectIdDisplay');
+        const usersPanel = document.getElementById('usersPanel');
+        const compileBtn = document.getElementById('compileBtn');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const formatBtn = document.getElementById('formatBtn');
+        const pdfPreview = document.getElementById('pdfPreview');
+        const pdfLoading = document.getElementById('pdfLoading');
+        const compilationStatus = document.getElementById('compilationStatus');
+        
+        const errorModal = document.getElementById('errorModal');
+        const errorContent = document.getElementById('errorContent');
+        const closeErrorBtn = document.getElementById('closeErrorBtn');
+        const dismissErrorBtn = document.getElementById('dismissErrorBtn');
+        
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toastIcon');
+        const toastTitle = document.getElementById('toastTitle');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastClose = document.getElementById('toastClose');
+        
+        const resizer = document.getElementById('resizer');
+        
+        // Initialize CodeMirror editor
+        function initEditor() {
+            editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+                mode: 'stex',
+                theme: 'nord',
+                lineNumbers: true,
+                matchBrackets: true,
+                lineWrapping: true,
+                autofocus: true,
+                indentUnit: 2,
+                smartIndent: true,
+                tabSize: 2,
+                extraKeys: {
+                    "Tab": function(cm) {
+                        if (cm.somethingSelected()) {
+                            cm.indentSelection("add");
+                        } else {
+                            cm.replaceSelection("  ", "end");
+                        }
+                    }
+                }
+            });
+            
+            // Handle editor changes
+            editor.on('change', (instance, changeObj) => {
+                if (!socket || changeObj.origin === 'setValue') return;
+                
+                // Get the current content
+                const content = editor.getValue();
+                
+                // Debounce sending changes
+                clearTimeout(sendChangeTimeout);
+                sendChangeTimeout = setTimeout(() => {
+                    if (content !== lastSentContent) {
+                        // Send the content to the server
+                        socket.emit('content-change', {
+                            projectId,
+                            content
+                        });
+                        
+                        lastSentContent = content;
+                    }
+                }, 300);
+            });
+        }
+        
+        // Initialize WebSocket connection
+        function initSocket() {
+            socket = io();
+            
+            // Handle connection
+            socket.on('connect', () => {
+                console.log('Connected to server');
+                showToast('info', 'Connected', 'Successfully connected to the server');
+                
+                // Join the project
+                socket.emit('join', {
+                    projectId,
+                    username
+                });
+                
+                // Add self to users panel
+                addUserBadge(socket.id, username);
+                
+                // Load initial content
+                loadProject();
+            });
+            
+            // Handle connection error
+            socket.on('connect_error', (error) => {
+                console.error('Connection error:', error);
+                showToast('error', 'Connection Error', 'Failed to connect to the server. Please check your network connection.');
+            });
+            
+            // Handle user joining
+            socket.on('user-joined', ({ userId, username }) => {
+                addUserBadge(userId, username);
+                showToast('info', 'User Joined', `${username} joined the document`);
+            });
+            
+            // Handle content changes from other users
+            socket.on('content-change', ({ content }) => {
+                // Update the editor without triggering onChange
+                const cursorPos = editor.getCursor();
+                editor.setValue(content);
+                lastSentContent = content;
+                editor.setCursor(cursorPos);
+            });
+            
+            // Handle compilation results
+            socket.on('compilation-result', ({ success, error }) => {
+                isCompiling = false;
+                
+                if (success) {
+                    // Update status
+                    compilationStatus.className = 'compilation-status status-success';
+                    compilationStatus.innerHTML = '<i class="fas fa-check-circle"></i><span>Compiled successfully</span>';
+                    showToast('success', 'Compilation Success', 'Your document compiled successfully');
+                } else {
+                    // Show error
+                    compilationStatus.className = 'compilation-status status-error';
+                    compilationStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>Compilation failed</span>';
+                    
+                    // Show the error modal
+                    errorContent.textContent = error;
+                    showModal(errorModal);
+                    
+                    showToast('error', 'Compilation Failed', 'There were errors in your LaTeX document');
+                }
+            });
+            
+            // Handle compilation complete notification
+            socket.on('compilation-complete', () => {
+                // Update the preview
+                updatePdfPreview();
+            });
+        }
+        
+        // Load project content from the server
+        async function loadProject() {
+            try {
+                const response = await fetch(`/api/projects/${projectId}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Set the editor content
+                    editor.setValue(data.content);
+                    lastSentContent = data.content;
+                    
+                    // Trigger initial compilation
+                    compileDocument();
+                } else {
+                    showToast('error', 'Project Error', 'Failed to load project');
+                }
+            } catch (error) {
+                console.error('Error loading project:', error);
+                showToast('error', 'Load Error', `Error loading project: ${error.message}`);
+            }
+        }
+        
+        // Add a user badge to the users panel
+        function addUserBadge(userId, username) {
+            // Check if badge already exists
+            if (document.querySelector(`.user-badge[data-user-id="${userId}"]`)) {
+                return;
+            }
+            
+            const badge = document.createElement('div');
+            badge.className = 'user-badge';
+            badge.dataset.userId = userId;
+            
+            const status = document.createElement('span');
+            status.className = 'status';
+            
+            const name = document.createElement('span');
+            name.textContent = username;
+            
+            badge.appendChild(status);
+            badge.appendChild(name);
+            usersPanel.appendChild(badge);
+        }
+        
+        // Compile the document
+        function compileDocument() {
+            if (isCompiling) return;
+            
+            isCompiling = true;
+            compilationStatus.className = 'compilation-status status-compiling';
+            compilationStatus.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i><span>Compiling...</span>';
+            pdfLoading.classList.remove('hidden');
+            
+            // Send compile request to the server
+            socket.emit('compile', { projectId });
+        }
+        
+        // Update PDF preview
+        function updatePdfPreview() {
+            // Add a timestamp to prevent caching
+            const timestamp = new Date().getTime();
+            pdfPreview.src = `/api/projects/${projectId}/pdf?t=${timestamp}`;
+            
+            // Hide loading when PDF loads
+            pdfPreview.onload = () => {
+                pdfLoading.classList.add('hidden');
+            };
+        }
+        
+        // Show a toast notification
+        function showToast(type, title, message) {
+            // Set toast content
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            
+            // Set the appropriate icon
+            toastIcon.className = `toast-icon ${type}`;
+            if (type === 'success') {
+                toastIcon.innerHTML = '<i class="fas fa-check"></i>';
+            } else if (type === 'error') {
+                toastIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            } else {
+                toastIcon.innerHTML = '<i class="fas fa-info"></i>';
+            }
+            
+            // Show the toast
+            toast.classList.add('active');
+            
+            // Auto-hide after 4 seconds
+            setTimeout(() => {
+                hideToast();
+            }, 4000);
+        }
+        
+        // Hide the toast notification
+        function hideToast() {
+            toast.classList.remove('active');
+        }
+        
+        // Show a modal
+        function showModal(modal) {
+            modal.classList.add('active');
+        }
+        
+        // Hide a modal
+        function hideModal(modal) {
+            modal.classList.remove('active');
+        }
+        
+        // Format the LaTeX code
+        function formatLatexCode() {
+            const content = editor.getValue();
+            
+            // Basic LaTeX formatting
+            // - Add spaces after commas in math mode
+            // - Properly indent environments
+            // - Format \item lists
+            
+            // This is a simplified formatter, a real one would be more complex
+            let formatted = content
+                .replace(/([^\\]),([^\s])/g, '$1, $2')  // Add spaces after commas
+                .replace(/\\begin\{([^}]+)\}/g, '\\begin{$1}\n  ')  // Indent after begin
+                .replace(/\\end\{([^}]+)\}/g, '\n\\end{$1}')        // Newline before end
+                .replace(/\\item\s*/g, '\\item ');                  // Space after item
+            
+            editor.setValue(formatted);
+            showToast('success', 'Format Complete', 'Your LaTeX code has been formatted');
+        }
+        
+        // Initialize the resizable panels
+        function initResizer() {
+            let isResizing = false;
+            let startX, startWidth;
+            
+            const editorContainer = document.querySelector('.editor-container');
+            const previewContainer = document.querySelector('.preview-container');
+            
+            resizer.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                startX = e.clientX;
+                startWidth = editorContainer.getBoundingClientRect().width;
+                
+                resizer.classList.add('active');
+                document.documentElement.style.cursor = 'col-resize';
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+                
+                // Prevent text selection while resizing
+                e.preventDefault();
+            });
+            
+            function handleMouseMove(e) {
+                if (!isResizing) return;
+                
+                const workspace = document.querySelector('.workspace');
+                const workspaceWidth = workspace.getBoundingClientRect().width;
+                const diff = e.clientX - startX;
+                const newWidth = Math.max(startWidth + diff, 200);
+                
+                // Ensure min width for preview
+                if (workspaceWidth - newWidth < 200) return;
+                
+                // Calculate percentage width
+                editorWidth = (newWidth / workspaceWidth) * 100;
+                
+                // Apply the new widths
+                editorContainer.style.flex = `0 0 ${editorWidth}%`;
+                previewContainer.style.flex = `1 1 ${100 - editorWidth}%`;
+            }
+            
+            function handleMouseUp() {
+                isResizing = false;
+                resizer.classList.remove('active');
+                document.documentElement.style.cursor = '';
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            }
+            
+            // Handle window resize to maintain proportions
+            window.addEventListener('resize', () => {
+                const workspace = document.querySelector('.workspace');
+                const workspaceWidth = workspace.getBoundingClientRect().width;
+                
+                editorContainer.style.flex = `0 0 ${editorWidth}%`;
+                previewContainer.style.flex = `1 1 ${100 - editorWidth}%`;
+            });
+        }
+        
+        // Event Listeners
+        newProjectChoice.addEventListener('click', () => {
+            newProjectChoice.classList.add('active');
+            joinProjectChoice.classList.remove('active');
+            joinProjectForm.classList.add('hidden');
+        });
+        
+        joinProjectChoice.addEventListener('click', () => {
+            joinProjectChoice.classList.add('active');
+            newProjectChoice.classList.remove('active');
+            joinProjectForm.classList.remove('hidden');
+        });
+        
+        startEditingBtn.addEventListener('click', async () => {
+            // Get username
+            username = usernameInput.value.trim() || `User-${Math.floor(Math.random() * 10000)}`;
+            
+            // Create or join project
+            if (newProjectChoice.classList.contains('active')) {
+                // Create new project
+                try {
+                    const response = await fetch('/api/projects', {
+                        method: 'POST'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        projectId = data.projectId;
+                    } else {
+                        showToast('error', 'Project Error', 'Failed to create project');
+                        return;
+                    }
+                } catch (error) {
+                    showToast('error', 'Error', error.message);
+                    return;
+                }
+            } else {
+                // Join existing project
+                projectId = projectIdInput.value.trim();
+                
+                if (!projectId) {
+                    showToast('error', 'Missing ID', 'Please enter a project ID');
+                    return;
+                }
+            }
+            
+            // Hide the welcome modal
+            hideModal(welcomeModal);
+            
+            // Display the project ID
+            projectIdDisplay.innerHTML = `<i class="fas fa-folder"></i><span>Project ID: ${projectId}</span>`;
+            
+            // Initialize the editor and socket
+            initEditor();
+            initSocket();
+            initResizer();
+        });
+        
+        compileBtn.addEventListener('click', () => {
+            compileDocument();
+        });
+        
+        formatBtn.addEventListener('click', () => {
+            formatLatexCode();
+        });
+        
+        downloadPdfBtn.addEventListener('click', () => {
+            window.open(`/api/projects/${projectId}/pdf`, '_blank');
+        });
+        
+        shareBtn.addEventListener('click', () => {
+            // Create share URL
+            const shareUrl = `${window.location.origin}?project=${projectId}`;
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(shareUrl)
+                .then(() => {
+                    showToast('success', 'Link Copied', 'Share link copied to clipboard');
+                })
+                .catch(err => {
+                    // Fallback if clipboard API fails
+                    prompt('Copy this link to share the document:', shareUrl);
+                });
+        });
+        
+        closeErrorBtn.addEventListener('click', () => {
+            hideModal(errorModal);
+        });
+        
+        dismissErrorBtn.addEventListener('click', () => {
+            hideModal(errorModal);
+        });
+        
+        toastClose.addEventListener('click', () => {
+            hideToast();
+        });
+        
+        // Check URL for project ID on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlProjectId = urlParams.get('project');
+            
+            if (urlProjectId) {
+                joinProjectChoice.click();
+                projectIdInput.value = urlProjectId;
+            }
+            
+            // Set initial focus
+            setTimeout(() => {
+                usernameInput.focus();
+            }, 300);
+        });
+    </script>
+</body>
+</html>

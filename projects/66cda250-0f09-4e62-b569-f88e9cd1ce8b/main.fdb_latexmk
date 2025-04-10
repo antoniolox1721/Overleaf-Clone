@@ -1,0 +1,18 @@
+# Fdb version 4
+["pdflatex"] 1744318390.54105 "main.tex" "main.pdf" "main" 1744318390.71739 0
+  "/etc/texmf/web2c/texmf.cnf" 1744317571.36223 475 c0e671620eb5563b2130f56340a5fde8 ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1248133631 35752 024fb6c41858982481f6968b5fc26508 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/article.cls" 1730496337 20144 d7d3a15c7efd9458741458961c8a96e7 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo" 1730496337 8448 bd43e47d84d3704b7eabd59a92e43bf1 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1716410060 29785 9f93ab201fe5dd053afcc6c1bcf7d266 ""
+  "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1736937473 41411 144d376c3b22a9103b7ec302371a0923 ""
+  "/usr/share/texmf/web2c/texmf.cnf" 1736937473 41411 144d376c3b22a9103b7ec302371a0923 ""
+  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1744317577 165012 f177baa1c39a3ebd62c3096a43521a0d ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1744317589 1958550 bb89f45b9d4e33cdcdf781cea03c822e ""
+  "main.aux" 1744318390.67264 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "main.tex" 1744318184.65335 67 3e60c08f6055acc9d12f0ce6fb82a788 ""
+  (generated)
+  "main.aux"
+  "main.log"
+  "main.pdf"
+  (rewritten before read)

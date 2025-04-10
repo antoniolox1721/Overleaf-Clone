@@ -1,0 +1,21 @@
+{
+  "name": "collaborative-latex-editor",
+  "version": "1.0.0",
+  "description": "Real-time collaborative LaTeX editor",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "body-parser": "^1.20.2",
+    "child_process": "^1.0.2",
+    "fs-extra": "^11.1.1",
+    "path": "^0.12.7",
+    "uuid": "^9.0.1",
+    "express-session": "^1.17.3",
+    "cookie-parser": "^1.4.6",
+    "diff-match-patch": "^1.0.5"
+  }
+}
